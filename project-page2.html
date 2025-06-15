@@ -247,7 +247,7 @@
         }
         
         .game-btn.blue {
-            background: #5C62EC);
+            background: #5C62EC;
         }
         
         .game-btn:hover {
@@ -268,6 +268,7 @@
             opacity: 0;
         }
         
+        /* Медиазапросы для адаптации под телефоны */
         @media (max-width: 768px) {
             .game-area {
                 flex-direction: column;
@@ -281,6 +282,7 @@
             .cell {
                 width: 80px;
                 height: 80px;
+                font-size: 3rem;
             }
             
             .game-title {
@@ -293,26 +295,94 @@
         }
         
         @media (max-width: 480px) {
+            .tic-tac-toe-container {
+                padding: 15px;
+                margin: 20px auto;
+            }
+            
+            .game-area {
+                gap: 20px;
+            }
+            
             .players-info {
                 flex-direction: column;
-            }
-            
-            .cell {
-                width: 70px;
-                height: 70px;
-            }
-            
-            .game-btn {
-                padding: 12px 20px;
-                min-width: 160px;
             }
             
             .player-card {
                 padding: 15px;
             }
             
+            .player-icon {
+                font-size: 2.5rem;
+            }
+            
+            .player-name {
+                font-size: 1.4rem;
+            }
+            
+            .score {
+                font-size: 2.5rem;
+                min-width: 100px;
+            }
+            
+            .board {
+                padding: 15px;
+                gap: 10px;
+            }
+            
+            .cell {
+                width: 60px;
+                height: 60px;
+                font-size: 2.5rem;
+                min-width: 60px;
+            }
+            
+            .status {
+                font-size: 1.3rem;
+                padding: 10px 20px;
+                min-width: 250px;
+            }
+            
             .game-title {
-                font-size: 1.8rem;
+                font-size: 1.5rem;
+            }
+            
+            .game-subtitle {
+                font-size: 0.9rem;
+            }
+            
+            .game-btn {
+                padding: 10px 15px;
+                min-width: 140px;
+                font-size: 0.9rem;
+                min-height: 45px;
+            }
+        }
+
+        @media (max-width: 360px) {
+            .cell {
+                width: 50px;
+                height: 50px;
+                font-size: 2rem;
+            }
+            
+            .status {
+                font-size: 1.1rem;
+                min-width: 200px;
+            }
+            
+            .game-btn {
+                min-width: 120px;
+                padding: 8px 12px;
+            }
+            
+            .player-name {
+                font-size: 1.2rem;
+            }
+            
+            .score {
+                font-size: 2rem;
+                min-width: 80px;
             }
         }
         
