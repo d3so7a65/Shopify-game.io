@@ -1,0 +1,620 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Shopify Game</title>
+    <link rel="stylesheet" href="./css/main.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* Tic Tac Toe Styles */
+        .tic-tac-toe-container {
+            max-width: 900px;
+            width: 100%;
+            margin: 40px auto;
+            padding: 30px;
+            background: var(--project-card-bg);
+            border-radius: 20px;
+            box-shadow: var(--box-shadow);
+        }
+        
+        .game-header {
+            text-align: center;
+            margin-bottom: 40px;
+            padding-bottom: 20px;
+            border-bottom: 2px solid var(--accent);
+        }
+        
+        .game-title {
+            font-size: 2.5rem;
+            margin-bottom: 15px;
+            color: var(--text-color);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            font-weight: 700;
+        }
+        
+        .game-subtitle {
+            font-size: 1.3rem;
+            color: var(--text-secondary);
+            opacity: 0.9;
+            max-width: 600px;
+            margin: 0 auto;
+            line-height: 1.5;
+        }
+        
+        .game-area {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 40px;
+        }
+        
+        .players-info {
+            display: flex;
+            flex-direction: column;
+            gap: 25px;
+            min-width: 250px;
+        }
+        
+        .player-card {
+            background: rgba(30, 40, 70, 0.7);
+            border-radius: 20px;
+            padding: 25px;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+            border: 2px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+        }
+        
+        .player-card.active {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.6);
+            border: 2px solid;
+        }
+        
+        .player-red.active {
+            border-color: #ff416c;
+            box-shadow: 0 0 25px rgba(255, 65, 108, 0.5);
+        }
+        
+        .player-blue.active {
+            border-color: #4cc9f0;
+            box-shadow: 0 0 25px rgba(76, 201, 240, 0.5);
+        }
+        
+        .player-icon {
+            font-size: 3.5rem;
+            margin-bottom: 15px;
+        }
+        
+        .player-red .player-icon {
+            color: #ff416c;
+        }
+        
+        .player-blue .player-icon {
+            color: #4cc9f0;
+        }
+        
+        .player-name {
+            font-size: 1.8rem;
+            margin-bottom: 15px;
+            font-weight: bold;
+            color: var(--text-color);
+        }
+        
+        .score {
+            font-size: 3rem;
+            font-weight: bold;
+            background: var(--page-bg);
+            border-radius: 15px;
+            padding: 10px 20px;
+            display: inline-block;
+            box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.5);
+            min-width: 120px;
+        }
+        
+        .player-red .score {
+            color: #ff416c;
+            text-shadow: 0 0 15px rgba(255, 65, 108, 0.5);
+        }
+        
+        .player-blue .score {
+            color: #4cc9f0;
+            text-shadow: 0 0 15px rgba(76, 201, 240, 0.5);
+        }
+        
+        .game-board-container {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 25px;
+            min-width: 350px;
+        }
+        
+        .status {
+            font-size: 1.8rem;
+            background: rgba(30, 40, 70, 0.7);
+            padding: 15px 40px;
+            border-radius: 50px;
+            font-weight: bold;
+            text-align: center;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+            min-width: 300px;
+            color: var(--text-color);
+        }
+        
+        .board {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+            background: rgba(30, 40, 70, 0.5);
+            padding: 25px;
+            border-radius: 25px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.4);
+            backdrop-filter: blur(10px);
+            border: 2px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .cell {
+            width: 100px;
+            height: 100px;
+            background: var(--page-bg);
+            border-radius: 15px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            font-size: 4rem;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .cell:hover {
+            transform: translateY(-5px);
+            background: var(--project-card-bg);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
+        }
+        
+        .cell.x::before, 
+        .cell.x::after {
+            content: '';
+            position: absolute;
+            width: 80%;
+            height: 12px;
+            background: #ff416c;
+            border-radius: 10px;
+        }
+        
+        .cell.x::before {
+            transform: rotate(45deg);
+        }
+        
+        .cell.x::after {
+            transform: rotate(-45deg);
+        }
+        
+        .cell.o::before {
+            content: '';
+            position: absolute;
+            width: 70%;
+            height: 70%;
+            border: 12px solid #4cc9f0;
+            border-radius: 50%;
+        }
+        
+        .winning-cell {
+            animation: pulse 1.5s infinite;
+        }
+        
+        @keyframes pulse {
+            0% { transform: scale(1); box-shadow: 0 0 15px currentColor; }
+            50% { transform: scale(1.05); box-shadow: 0 0 25px currentColor; }
+            100% { transform: scale(1); box-shadow: 0 0 15px currentColor; }
+        }
+        
+        .controls {
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+            justify-content: center;
+            margin-top: 20px;
+        }
+        
+        .game-btn {
+            background: var(--accent);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 50px;
+            cursor: pointer;
+            font-size: 1.1rem;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            min-width: 180px;
+            justify-content: center;
+        }
+        
+        .game-btn.blue {
+            background: #5C62EC);
+        }
+        
+        .game-btn:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
+        }
+        
+        .game-btn:active {
+            transform: translateY(0);
+        }
+        
+        .confetti {
+            position: fixed;
+            width: 10px;
+            height: 10px;
+            background: #ffeb3b;
+            top: -10px;
+            opacity: 0;
+        }
+        
+        @media (max-width: 768px) {
+            .game-area {
+                flex-direction: column;
+            }
+            
+            .players-info {
+                flex-direction: row;
+                justify-content: center;
+            }
+            
+            .cell {
+                width: 80px;
+                height: 80px;
+            }
+            
+            .game-title {
+                font-size: 2rem;
+            }
+            
+            .game-subtitle {
+                font-size: 1.1rem;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .players-info {
+                flex-direction: column;
+            }
+            
+            .cell {
+                width: 70px;
+                height: 70px;
+            }
+            
+            .game-btn {
+                padding: 12px 20px;
+                min-width: 160px;
+            }
+            
+            .player-card {
+                padding: 15px;
+            }
+            
+            .game-title {
+                font-size: 1.8rem;
+            }
+        }
+        
+        .win-animation {
+            animation: winAnim 0.5s ease;
+        }
+        
+        @keyframes winAnim {
+            0% { transform: scale(0.8); opacity: 0; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+    </style>
+</head>
+<body>
+    <nav class="nav">
+        <div class="container">
+            <div class="nav-row">
+                <a href="./index.html" class="logo"><strong>Shopify</strong> Game</a>
+
+                <button class="dark-mode-btn">
+                    <img src="./img/icons/sun.svg" alt="Light mode" class="dark-mode-btn__icon">
+                    <img src="./img/icons/moon.svg" alt="Dark mode" class="dark-mode-btn__icon">
+                </button>
+
+                <ul class="nav-list">
+                    <li class="nav-list__item"><a href="./index.html" class="nav-list__link nav-list__link--active">Главная</a></li>
+                    <li class="nav-list__item"><a href="./logout/login-password/lgpass.html" class="nav-list__link">Войти</a></li>
+                    <li class="nav-list__item"><a href="./logout/login-password/register.html" class="nav-list__link">Регистрация</a></li>
+                    <li class="nav-list__item"><a href="./contacts.html" class="nav-list__link">Контакты</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <main class="section">
+        <div class="container">
+            <div class="project-details">
+                <div class="tic-tac-toe-container">
+                    <div class="game-header">
+                        <div class="game-title">Крестики-Нолики</div>
+                        <div class="game-subtitle">Красный против Синего – битва умов и тактики!</div>
+                    </div>
+                    
+                    <div class="game-area">
+                        <div class="players-info">
+                            <div class="player-card player-red active">
+                                <div class="player-icon">
+                                    <i class="fas fa-times"></i>
+                                </div>
+                                <div class="player-name">Красный Игрок</div>
+                                <div class="score" id="red-score">0</div>
+                            </div>
+                            
+                            <div class="player-card player-blue">
+                                <div class="player-icon">
+                                    <i class="far fa-circle"></i>
+                                </div>
+                                <div class="player-name">Синий Игрок</div>
+                                <div class="score" id="blue-score">0</div>
+                            </div>
+                        </div>
+                        
+                        <div class="game-board-container">
+                            <div class="status" id="status">Ход Красного Игрока</div>
+                            
+                            <div class="board" id="board">
+                                <div class="cell" data-cell-index="0"></div>
+                                <div class="cell" data-cell-index="1"></div>
+                                <div class="cell" data-cell-index="2"></div>
+                                <div class="cell" data-cell-index="3"></div>
+                                <div class="cell" data-cell-index="4"></div>
+                                <div class="cell" data-cell-index="5"></div>
+                                <div class="cell" data-cell-index="6"></div>
+                                <div class="cell" data-cell-index="7"></div>
+                                <div class="cell" data-cell-index="8"></div>
+                            </div>
+                            
+                            <div class="controls">
+                                <button class="game-btn" id="restart"><i class="fas fa-sync-alt"></i> Новая Игра</button>
+                                <button class="game-btn blue" id="reset-scores"><i class="fas fa-trash-alt"></i> Сбросить Счет</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="project-details__desc">
+                    <p>Игра для двух игроков. Красный ходит крестиками, синий - ноликами. Побеждает тот, кто первым выстроит линию из трёх своих знаков по горизонтали, вертикали или диагонали.</p>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer class="footer">
+        <div class="container">
+            <div class="footer__wrapper">
+                <ul class="social">
+                    <li class="social__item"><a href="#!"><img src="./img/icons/vk.svg" alt="Link"></a></li>
+                    <li class="social__item"><a href="#!"><img src="./img/icons/instagram.svg" alt="Link"></a></li>
+                    <li class="social__item"><a href="#!"><img src="./img/icons/twitter.svg" alt="Link"></a></li>
+                    <li class="social__item"><a href="#!"><img src="./img/icons/gitHub.svg" alt="Link"></a></li>
+                    <li class="social__item"><a href="#!"><img src="./img/icons/linkedIn.svg" alt="Link"></a></li>
+                </ul>
+                <div class="copyright">
+                    <p>© 2025 mgkeit.mskobr.ru</p>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script src="./js/main.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // Состояние игры
+            const gameState = {
+                board: ['', '', '', '', '', '', '', '', ''],
+                currentPlayer: 'X', // X - красный, O - синий
+                gameActive: true,
+                scores: {
+                    red: 0,
+                    blue: 0
+                },
+                winningCombinations: [
+                    [0, 1, 2], [3, 4, 5], [6, 7, 8], // горизонтали
+                    [0, 3, 6], [1, 4, 7], [2, 5, 8], // вертикали
+                    [0, 4, 8], [2, 4, 6]             // диагонали
+                ]
+            };
+            
+            // Элементы DOM
+            const cells = document.querySelectorAll('.cell');
+            const statusElement = document.getElementById('status');
+            const redScoreElement = document.getElementById('red-score');
+            const blueScoreElement = document.getElementById('blue-score');
+            const restartButton = document.getElementById('restart');
+            const resetScoresButton = document.getElementById('reset-scores');
+            const playerRedCard = document.querySelector('.player-red');
+            const playerBlueCard = document.querySelector('.player-blue');
+            
+            // Инициализация игры
+            function initGame() {
+                gameState.board = ['', '', '', '', '', '', '', '', ''];
+                gameState.gameActive = true;
+                gameState.currentPlayer = 'X';
+                
+                // Очистка поля
+                cells.forEach(cell => {
+                    cell.classList.remove('x', 'o', 'winning-cell');
+                    cell.style.pointerEvents = 'auto';
+                });
+                
+                // Обновление статуса
+                updateStatus();
+                
+                // Обновление активного игрока
+                playerRedCard.classList.add('active');
+                playerBlueCard.classList.remove('active');
+                
+                // Сброс цвета статуса
+                statusElement.style.color = '';
+            }
+            
+            // Обработка клика по ячейке
+            function handleCellClick(e) {
+                const cell = e.target;
+                const cellIndex = parseInt(cell.getAttribute('data-cell-index'));
+                
+                // Проверка на возможность хода
+                if (gameState.board[cellIndex] !== '' || !gameState.gameActive) {
+                    return;
+                }
+                
+                // Совершение хода
+                gameState.board[cellIndex] = gameState.currentPlayer;
+                cell.classList.add(gameState.currentPlayer === 'X' ? 'x' : 'o');
+                cell.classList.add('win-animation');
+                
+                // Проверка на победу или ничью
+                if (checkWin()) {
+                    endGame(false);
+                } else if (isDraw()) {
+                    endGame(true);
+                } else {
+                    // Смена игрока
+                    gameState.currentPlayer = gameState.currentPlayer === 'X' ? 'O' : 'X';
+                    updateStatus();
+                    
+                    // Обновление активной карточки
+                    playerRedCard.classList.toggle('active');
+                    playerBlueCard.classList.toggle('active');
+                }
+            }
+            
+            // Проверка победы
+            function checkWin() {
+                for (const combination of gameState.winningCombinations) {
+                    const [a, b, c] = combination;
+                    
+                    if (
+                        gameState.board[a] !== '' &&
+                        gameState.board[a] === gameState.board[b] &&
+                        gameState.board[a] === gameState.board[c]
+                    ) {
+                        // Подсветка выигрышной комбинации
+                        cells[a].classList.add('winning-cell');
+                        cells[b].classList.add('winning-cell');
+                        cells[c].classList.add('winning-cell');
+                        
+                        return true;
+                    }
+                }
+                return false;
+            }
+            
+            // Проверка ничьи
+            function isDraw() {
+                return !gameState.board.includes('');
+            }
+            
+            // Обновление статуса игры
+            function updateStatus() {
+                if (gameState.gameActive) {
+                    statusElement.textContent = gameState.currentPlayer === 'X' 
+                        ? 'Ход Красного Игрока' 
+                        : 'Ход Синего Игрока';
+                }
+            }
+            
+            // Завершение игры
+            function endGame(isDraw) {
+                gameState.gameActive = false;
+                
+                if (isDraw) {
+                    statusElement.textContent = 'Ничья!';
+                    statusElement.style.color = '#ffeb3b';
+                    createConfetti('#ffeb3b');
+                } else {
+                    if (gameState.currentPlayer === 'X') {
+                        statusElement.textContent = 'Красный Игрок победил!';
+                        statusElement.style.color = '#ff416c';
+                        gameState.scores.red++;
+                        redScoreElement.textContent = gameState.scores.red;
+                        createConfetti('#ff416c');
+                    } else {
+                        statusElement.textContent = 'Синий Игрок победил!';
+                        statusElement.style.color = '#4cc9f0';
+                        gameState.scores.blue++;
+                        blueScoreElement.textContent = gameState.scores.blue;
+                        createConfetti('#4cc9f0');
+                    }
+                    
+                    // Обновление активной карточки победителя
+                    playerRedCard.classList.toggle('active', gameState.currentPlayer === 'X');
+                    playerBlueCard.classList.toggle('active', gameState.currentPlayer === 'O');
+                }
+                
+                // Блокировка дальнейших ходов
+                cells.forEach(cell => {
+                    cell.style.pointerEvents = 'none';
+                });
+            }
+            
+            // Создание конфетти
+            function createConfetti(color) {
+                const container = document.body;
+                
+                for (let i = 0; i < 100; i++) {
+                    const confetti = document.createElement('div');
+                    confetti.className = 'confetti';
+                    confetti.style.left = `${Math.random() * 100}vw`;
+                    confetti.style.backgroundColor = color;
+                    confetti.style.width = `${Math.random() * 10 + 5}px`;
+                    confetti.style.height = confetti.style.width;
+                    confetti.style.animation = `confetti ${Math.random() * 3 + 2}s linear forwards`;
+                    confetti.style.animationDelay = `${Math.random() * 2}s`;
+                    container.appendChild(confetti);
+                    
+                    setTimeout(() => {
+                        confetti.remove();
+                    }, 5000);
+                }
+            }
+            
+            // Назначение обработчиков событий
+            cells.forEach(cell => {
+                cell.addEventListener('click', handleCellClick);
+            });
+            
+            restartButton.addEventListener('click', () => {
+                initGame();
+            });
+            
+            resetScoresButton.addEventListener('click', () => {
+                gameState.scores.red = 0;
+                gameState.scores.blue = 0;
+                redScoreElement.textContent = '0';
+                blueScoreElement.textContent = '0';
+                initGame();
+            });
+            
+            // Инициализация первой игры
+            initGame();
+        });
+    </script>
+</body>
+</html>
